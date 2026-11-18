@@ -1,4 +1,4 @@
-# Huella de carbono: ¿quién contamina más?
+## Huella de carbono: ¿quién contamina más?
 
 Dashboard interactivo en React sobre las emisiones anuales totales de CO₂ por país (2010–2023).
 
@@ -167,15 +167,16 @@ Abre en el navegador la dirección que indique Vite (normalmente `http://localho
 
 ## Paleta de colores
 
-| Color | Código | Uso |
-|---|---|---|
-| Verde petróleo oscuro | `#102D29` | Menú lateral y textos principales |
-| Blanco puro | `#FFFFFF` | Fondo de las tarjetas |
-| Gris humo / blanco verdoso | `#F4F7F6` | Fondo general del dashboard |
-| Verde bosque / esmeralda oscuro | `#1B665B` | Barras principales, línea de evolución, escala alta del mapa |
-| Verde turquesa | `#579B8E` | Escala intermedia del mapa |
-| Verde grisáceo claro | `#B7CEC9` | Escala baja del mapa y subtarjetas |
-| Terracota | `#BD7356` | Incrementos porcentuales |
+| Color | Código | Muestra | Uso |
+|---|---|---|---|
+| Verde petróleo oscuro | `#102D29` | ![#102D29](https://placehold.co/70x24/102D29/102D29.png) | Menú lateral y textos principales |
+| Blanco puro | `#FFFFFF` | ![#FFFFFF](https://placehold.co/70x24/FFFFFF/FFFFFF.png) | Fondo de las tarjetas |
+| Gris humo / blanco verdoso | `#F4F7F6` | ![#F4F7F6](https://placehold.co/70x24/F4F7F6/F4F7F6.png) | Fondo general del dashboard |
+| Verde bosque / esmeralda oscuro | `#1B665B` | ![#1B665B](https://placehold.co/70x24/1B665B/1B665B.png) | Barras principales, línea de evolución, escala alta del mapa |
+| Verde turquesa | `#579B8E` | ![#579B8E](https://placehold.co/70x24/579B8E/579B8E.png) | Escala intermedia del mapa |
+| Verde grisáceo claro | `#B7CEC9` | ![#B7CEC9](https://placehold.co/70x24/B7CEC9/B7CEC9.png) | Escala baja del mapa y subtarjetas |
+| Terracota | `#BD7356` | ![#BD7356](https://placehold.co/70x24/BD7356/BD7356.png) | Incrementos porcentuales |
+
 
 ---
 
