@@ -5,6 +5,16 @@
   background: #F4F7F5;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --color-primary: #28765B;
+  --color-sidebar: #173B32;
+  --color-background: #F4F7F5;
+  --color-surface: #FFFFFF;
+  --color-border: #E2EAE5;
+  --color-text: #173B32;
+  --color-muted: #718078;
 }
 
 * {
@@ -13,16 +23,42 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html {
   width: 100%;
+  min-width: 320px;
   min-height: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
+  width: 100%;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--color-background);
 }
 
 #root {
+  width: 100%;
   min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
 }

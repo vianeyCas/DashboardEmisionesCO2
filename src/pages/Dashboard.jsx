@@ -21,8 +21,14 @@ import {
   Flag,
   Activity,
   CalendarDays,
-  ChevronDown
+  ChevronDown,
+  Search,
+  Leaf
 } from "lucide-react";
+
+// ========================================
+// CONFIGURACIÓN GENERAL
+// ========================================
 
 const API = "http://localhost:3001/api/emisiones";
 
@@ -33,6 +39,7 @@ const nombresPaises = {
   Japan: "Japón",
   China: "China",
   India: "India",
+  Mexico: "México",
   "Estados Unidos": "Estados Unidos"
 };
 
@@ -44,13 +51,38 @@ const coloresLineas = [
   "#9B59B6"
 ];
 
+// ========================================
+// FUNCIONES AUXILIARES
+// ========================================
+
 function nombreEnEspanol(nombre) {
+  if (!nombre) return "Sin información";
   return nombresPaises[nombre] || nombre;
 }
 
 function convertirAGigatoneladas(valor) {
-  return (Number(valor) / 1000000000).toFixed(2);
+  const numero = Number(valor);
+
+  if (!Number.isFinite(numero)) {
+    return "0.00";
+  }
+
+  return (numero / 1000000000).toFixed(2);
 }
+
+function formatearVariacion(valor) {
+  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
+    return "Sin datos";
+  }
+
+  const numero = Number(valor);
+
+  return `${numero >= 0 ? "+" : ""}${numero.toFixed(2)}%`;
+}
+
+// ========================================
+// COMPONENTE PRINCIPAL
+// ========================================
 
 function Dashboard() {
   // ========================================
@@ -71,6 +103,7 @@ function Dashboard() {
   const [paises, setPaises] = useState([]);
   const [paisesSeleccionados, setPaisesSeleccionados] = useState([]);
   const [filtroAbierto, setFiltroAbierto] = useState(false);
+  const [paisBusqueda, setPaisBusqueda] = useState("");
 
   // ========================================
   // DATOS DE ANÁLISIS
@@ -81,7 +114,7 @@ function Dashboard() {
   const [detalle, setDetalle] = useState([]);
 
   // ========================================
-  // PAGINACIÓN DE LA TABLA
+  // PAGINACIÓN
   // ========================================
 
   const [paginaActual, setPaginaActual] = useState(1);
@@ -110,13 +143,29 @@ function Dashboard() {
   const [errorDetalle, setErrorDetalle] = useState("");
 
   // ========================================
-  // CÓDIGOS SELECCIONADOS
+  // CÓDIGOS DE PAÍSES SELECCIONADOS
   // ========================================
 
   const codigosQuery = useMemo(
     () => paisesSeleccionados.join(","),
     [paisesSeleccionados]
   );
+
+  // ========================================
+  // PAÍSES FILTRADOS POR EL BUSCADOR
+  // ========================================
+
+  const paisesFiltrados = useMemo(() => {
+    const busqueda = paisBusqueda.trim().toLowerCase();
+
+    if (!busqueda) {
+      return paises;
+    }
+
+    return paises.filter((pais) =>
+      String(pais.entity || "").toLowerCase().includes(busqueda)
+    );
+  }, [paises, paisBusqueda]);
 
   // ========================================
   // DATOS DE PAGINACIÓN
@@ -129,7 +178,6 @@ function Dashboard() {
   );
 
   const indiceInicial = (paginaActual - 1) * registrosPorPagina;
-
   const indiceFinal = indiceInicial + registrosPorPagina;
 
   const registrosPaginados = detalle.slice(
@@ -142,9 +190,13 @@ function Dashboard() {
   // ========================================
 
   useEffect(() => {
+    const controlador = new AbortController();
+
     const obtenerAnios = async () => {
       try {
-        const respuesta = await fetch(`${API}/anios`);
+        const respuesta = await fetch(`${API}/anios`, {
+          signal: controlador.signal
+        });
 
         if (!respuesta.ok) {
           throw new Error("No se pudieron obtener los años");
@@ -155,16 +207,20 @@ function Dashboard() {
         setAnios(datos);
 
         if (datos.length > 0) {
-          setAnio(String(Math.max(...datos)));
+          setAnio(String(Math.max(...datos.map(Number))));
         }
       } catch (error) {
-        console.error(error);
-        setError("No se pudieron cargar los años disponibles.");
-        setCargando(false);
+        if (error.name !== "AbortError") {
+          console.error(error);
+          setError("No se pudieron cargar los años disponibles.");
+          setCargando(false);
+        }
       }
     };
 
     obtenerAnios();
+
+    return () => controlador.abort();
   }, []);
 
   // ========================================
@@ -246,8 +302,10 @@ function Dashboard() {
           throw new Error("No fue posible consultar los datos");
         }
 
-        const datosResumen = await respuestaResumen.json();
-        const datosTop = await respuestaTop.json();
+        const [datosResumen, datosTop] = await Promise.all([
+          respuestaResumen.json(),
+          respuestaTop.json()
+        ]);
 
         setResumen(datosResumen);
 
@@ -540,7 +598,7 @@ function Dashboard() {
   }, [anio, codigosQuery]);
 
   // ========================================
-  // REINICIAR PAGINACIÓN CUANDO CAMBIAN LOS DATOS
+  // REINICIAR PAGINACIÓN
   // ========================================
 
   useEffect(() => {
@@ -582,6 +640,7 @@ function Dashboard() {
   const limpiarSeleccion = () => {
     setPaisesSeleccionados([]);
     setErrorComparacion("");
+    setPaisBusqueda("");
   };
 
   // ========================================
@@ -653,24 +712,34 @@ function Dashboard() {
         },
         {
           titulo: "Variación anual",
-          valor:
-            resumen.variacion_porcentual === null
-              ? "Sin datos"
-              : `${resumen.variacion_porcentual >= 0 ? "+" : ""}${Number(
-                  resumen.variacion_porcentual
-                ).toFixed(2)}%`,
+          valor: formatearVariacion(
+            resumen.variacion_porcentual
+          ),
           descripcion: "Respecto al año anterior",
           icono: TrendingUp,
           clase: "orange"
         },
         {
           titulo: "Países analizados",
-          valor: resumen.total_paises,
+          valor: resumen.total_paises ?? 0,
           descripcion: codigosQuery
             ? "Entidades seleccionadas"
             : "Entidades a nivel mundial",
           icono: Activity,
           clase: "purple"
+        },
+        {
+          titulo: "Emisión promedio",
+          valor:
+            Number(resumen.total_paises) > 0
+              ? `${convertirAGigatoneladas(
+                  Number(resumen.total_emisiones) /
+                    Number(resumen.total_paises)
+                )} Gt`
+              : "Sin datos",
+          descripcion: "Promedio por país analizado",
+          icono: Leaf,
+          clase: "green"
         }
       ]
     : [];
@@ -693,14 +762,15 @@ function Dashboard() {
   // ========================================
 
   return (
-    <section className="dashboard-content">
-
-      {/* FILTROS GLOBALES */}
+    <section className="dashboard-content" id="resumen">
+      {/* ==================================
+          FILTROS GLOBALES
+      ================================== */}
 
       <div className="dashboard-filters">
 
         <div className="filter-label">
-          <CalendarDays size={18} />
+          <CalendarDays size={19} />
           <span>Filtros de análisis</span>
         </div>
 
@@ -710,7 +780,7 @@ function Dashboard() {
 
           <div className="filter-control">
             <label htmlFor="filtro-anio">
-              Periodo de análisis
+              Año de análisis
             </label>
 
             <select
@@ -727,26 +797,33 @@ function Dashboard() {
             </select>
           </div>
 
-          {/* FILTRO DESPLEGABLE DE PAÍSES */}
+          {/* FILTRO DE PAÍSES */}
 
           <div className="filter-control country-filter">
 
-            <label>Países para analizar (opcional)</label>
+            <label htmlFor="filtro-paises">
+              Buscar y seleccionar países
+            </label>
 
             <div className="selectBox">
+
               <button
                 type="button"
                 className="country-filter-button"
-                onClick={() => setFiltroAbierto(!filtroAbierto)}
+                onClick={() => {
+                  setFiltroAbierto((abierto) => !abierto);
+                  setPaisBusqueda("");
+                }}
                 disabled={cargandoPaises}
                 aria-expanded={filtroAbierto}
+                aria-controls="lista-paises"
               >
                 <span>
                   {cargandoPaises
                     ? "Cargando países..."
                     : paisesSeleccionados.length === 0
                       ? "Todos los países"
-                      : `${paisesSeleccionados.length} países seleccionados`}
+                      : `${paisesSeleccionados.length} de 5 países seleccionados`}
                 </span>
 
                 <ChevronDown
@@ -763,28 +840,59 @@ function Dashboard() {
                     <span>{paisesSeleccionados.length}/5</span>
                   </div>
 
-                  <div className="country-filter-options">
-                    {paises.map((pais) => (
-                      <label
-                        className="country-filter-option"
-                        key={pais.code}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={paisesSeleccionados.includes(pais.code)}
-                          onChange={() => manejarSeleccionPais(pais.code)}
-                          disabled={
-                            !paisesSeleccionados.includes(pais.code) &&
-                            paisesSeleccionados.length >= 5
-                          }
-                        />
+                  {/* BUSCADOR */}
 
-                        <span>{pais.entity}</span>
-                      </label>
-                    ))}
+                  <div className="country-search">
+                    <Search size={16} />
+
+                    <input
+                      id="filtro-paises"
+                      type="text"
+                      value={paisBusqueda}
+                      onChange={(e) => setPaisBusqueda(e.target.value)}
+                      placeholder="Escribe el nombre de un país..."
+                      autoComplete="off"
+                    />
                   </div>
 
+                  {/* LISTA DE PAÍSES */}
+
+                  <div
+                    className="country-filter-options"
+                    id="lista-paises"
+                  >
+                    {paisesFiltrados.length > 0 ? (
+                      paisesFiltrados.map((pais) => (
+                        <label
+                          className="country-filter-option"
+                          key={pais.code}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={paisesSeleccionados.includes(pais.code)}
+                            onChange={() =>
+                              manejarSeleccionPais(pais.code)
+                            }
+                            disabled={
+                              !paisesSeleccionados.includes(pais.code) &&
+                              paisesSeleccionados.length >= 5
+                            }
+                          />
+
+                          <span>{pais.entity}</span>
+                        </label>
+                      ))
+                    ) : (
+                      <p className="country-no-results">
+                        No se encontraron países.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* ACCIONES DEL FILTRO */}
+
                   <div className="country-filter-footer">
+
                     <button
                       type="button"
                       onClick={limpiarSeleccion}
@@ -794,30 +902,36 @@ function Dashboard() {
 
                     <button
                       type="button"
-                      onClick={() => setFiltroAbierto(false)}
+                      onClick={() => {
+                        setFiltroAbierto(false);
+                        setPaisBusqueda("");
+                      }}
                     >
-                      Cerrar
+                      Aplicar
                     </button>
-                  </div>
 
+                  </div>
                 </div>
               )}
             </div>
 
             <span className="filter-help">
               {codigosQuery
-                ? "Las visualizaciones muestran los países seleccionados."
+                ? "El análisis considera únicamente los países seleccionados."
                 : "Sin selección se muestran los datos mundiales."}
             </span>
-
           </div>
-
         </div>
+
+        {/* PAÍSES SELECCIONADOS */}
 
         {nombresSeleccionados.length > 0 && (
           <div className="selected-countries">
             {nombresSeleccionados.map((nombre, index) => (
-              <span className="selected-country-chip" key={index}>
+              <span
+                className="selected-country-chip"
+                key={`${nombre}-${index}`}
+              >
                 {nombre}
               </span>
             ))}
@@ -825,19 +939,27 @@ function Dashboard() {
         )}
 
         {errorPaises && (
-          <div className="error-message">{errorPaises}</div>
+          <div className="error-message">
+            {errorPaises}
+          </div>
         )}
 
         {errorComparacion && (
-          <div className="error-message">{errorComparacion}</div>
+          <div className="error-message">
+            {errorComparacion}
+          </div>
         )}
 
       </div>
 
-      {/* MENSAJES DE ESTADO */}
+      {/* ==================================
+          MENSAJES DE ESTADO
+      ================================== */}
 
       {error && (
-        <div className="error-message">{error}</div>
+        <div className="error-message">
+          {error}
+        </div>
       )}
 
       {cargando && (
@@ -846,18 +968,29 @@ function Dashboard() {
         </p>
       )}
 
+      {/* ==================================
+          CONTENIDO DEL DASHBOARD
+      ================================== */}
+
       {!cargando && !error && resumen && (
         <>
 
-          {/* TARJETAS KPI */}
+          {/* ==================================
+              TARJETAS KPI
+          ================================== */}
 
           <div className="kpi-grid">
+
             {indicadores.map((indicador, index) => {
               const Icono = indicador.icono;
 
               return (
-                <article className="kpi-card" key={index}>
+                <article
+                  className="kpi-card"
+                  key={indicador.titulo}
+                >
                   <div className="kpi-card-header">
+
                     <span className="kpi-title">
                       {indicador.titulo}
                     </span>
@@ -865,6 +998,7 @@ function Dashboard() {
                     <div className={`kpi-icon ${indicador.clase}`}>
                       <Icono size={20} />
                     </div>
+
                   </div>
 
                   <h2 className="kpi-value">
@@ -874,14 +1008,18 @@ function Dashboard() {
                   <p className="kpi-description">
                     {indicador.descripcion}
                   </p>
+
                 </article>
               );
             })}
+
           </div>
 
-          {/* VISUALIZACIÓN PRINCIPAL */}
+          {/* ==================================
+              MAPA Y RANKING
+          ================================== */}
 
-          <div className="primary-grid">
+          <div className="primary-grid" id="emisiones-pais">
 
             {/* MAPA */}
 
@@ -897,6 +1035,7 @@ function Dashboard() {
             <article className="dashboard-card ranking-card">
 
               <div className="card-heading">
+
                 <div>
                   <h2>
                     {codigosQuery
@@ -909,10 +1048,14 @@ function Dashboard() {
                   </p>
                 </div>
 
-                <span className="year-label">{anio}</span>
+                <span className="year-label">
+                  {anio}
+                </span>
+
               </div>
 
               <div className="chart-container">
+
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={topPaises}
@@ -924,6 +1067,7 @@ function Dashboard() {
                       bottom: 10
                     }}
                   >
+
                     <CartesianGrid
                       strokeDasharray="3 3"
                       horizontal={false}
@@ -960,11 +1104,14 @@ function Dashboard() {
                       radius={[0, 5, 5, 0]}
                       barSize={22}
                     />
+
                   </BarChart>
                 </ResponsiveContainer>
+
               </div>
 
               <div className="ranking-summary">
+
                 <span>Principal país emisor</span>
 
                 <strong>
@@ -978,19 +1125,27 @@ function Dashboard() {
                     ? `${topPaises[0].emisiones_gt.toFixed(2)} Gt de CO₂ en ${anio}`
                     : "No hay información disponible"}
                 </p>
+
               </div>
+
             </article>
           </div>
 
-          {/* ANÁLISIS SECUNDARIO */}
+          {/* ==================================
+              ANÁLISIS SECUNDARIO
+          ================================== */}
 
           <div className="secondary-grid">
 
             {/* EVOLUCIÓN HISTÓRICA */}
 
-            <article className="dashboard-card evolution-card secondary-card">
+            <article
+              className="dashboard-card evolution-card secondary-card"
+              id="evolucion"
+            >
 
               <div className="card-heading">
+
                 <div>
                   <h2>Evolución histórica</h2>
 
@@ -1000,6 +1155,7 @@ function Dashboard() {
                       : "Evolución mundial de las emisiones entre 2010 y 2023"}
                   </p>
                 </div>
+
               </div>
 
               {cargandoEvolucion && (
@@ -1016,6 +1172,7 @@ function Dashboard() {
 
               {!cargandoEvolucion && !errorEvolucion && (
                 <div className="chart-container evolution-chart">
+
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                       data={evolucion}
@@ -1026,6 +1183,7 @@ function Dashboard() {
                         bottom: 10
                       }}
                     >
+
                       <CartesianGrid
                         strokeDasharray="3 3"
                         stroke="#E7EDE9"
@@ -1082,8 +1240,10 @@ function Dashboard() {
                           activeDot={{ r: 6 }}
                         />
                       )}
+
                     </LineChart>
                   </ResponsiveContainer>
+
                 </div>
               )}
 
@@ -1091,13 +1251,18 @@ function Dashboard() {
                 <span>Periodo analizado</span>
                 <strong>2010 – 2023</strong>
               </div>
+
             </article>
 
             {/* COMPARACIÓN ENTRE PAÍSES */}
 
-            <article className="dashboard-card secondary-card">
+            <article
+              className="dashboard-card secondary-card"
+              id="comparacion"
+            >
 
               <div className="card-heading">
+
                 <div>
                   <h2>
                     {codigosQuery
@@ -1105,8 +1270,11 @@ function Dashboard() {
                       : "Comparación de los principales emisores"}
                   </h2>
 
-                  <p>Emisiones de CO₂ en {anio}</p>
+                  <p>
+                    Emisiones de CO₂ en {anio}
+                  </p>
                 </div>
+
               </div>
 
               {cargandoComparacion && (
@@ -1115,21 +1283,21 @@ function Dashboard() {
                 </p>
               )}
 
-              {!cargandoComparacion &&
-                !puedeMostrarComparacion && (
-                  <div className="chart-placeholder">
-                    <p>
-                      Selecciona al menos dos países para visualizar
-                      la comparación, o limpia el filtro para consultar
-                      los cinco principales emisores.
-                    </p>
-                  </div>
-                )}
+              {!cargandoComparacion && !puedeMostrarComparacion && (
+                <div className="chart-placeholder">
+                  <p>
+                    Selecciona al menos dos países para visualizar
+                    la comparación, o limpia el filtro para consultar
+                    los cinco principales emisores.
+                  </p>
+                </div>
+              )}
 
               {!cargandoComparacion &&
                 puedeMostrarComparacion &&
                 datosComparacion.length > 0 && (
                   <div className="chart-container">
+
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={datosComparacion}
@@ -1140,6 +1308,7 @@ function Dashboard() {
                           bottom: 35
                         }}
                       >
+
                         <CartesianGrid
                           strokeDasharray="3 3"
                           vertical={false}
@@ -1178,8 +1347,10 @@ function Dashboard() {
                           radius={[5, 5, 0, 0]}
                           barSize={35}
                         />
+
                       </BarChart>
                     </ResponsiveContainer>
+
                   </div>
                 )}
 
@@ -1195,6 +1366,7 @@ function Dashboard() {
                 )}
 
               <div className="highlight-strip">
+
                 <span>
                   {codigosQuery
                     ? "Países seleccionados"
@@ -1206,7 +1378,9 @@ function Dashboard() {
                     ? `${paisesSeleccionados.length} de 5`
                     : `${datosComparacion.length} principales`}
                 </strong>
+
               </div>
+
             </article>
 
             {/* VARIACIONES PORCENTUALES */}
@@ -1214,6 +1388,7 @@ function Dashboard() {
             <article className="dashboard-card secondary-card">
 
               <div className="card-heading">
+
                 <div>
                   <h2>Variaciones porcentuales</h2>
 
@@ -1221,6 +1396,7 @@ function Dashboard() {
                     Cambios respecto a {Number(anio) - 1}
                   </p>
                 </div>
+
               </div>
 
               {cargandoVariaciones && (
@@ -1239,6 +1415,7 @@ function Dashboard() {
                 !errorVariaciones &&
                 datosVariaciones.length > 0 && (
                   <div className="chart-container">
+
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={datosVariaciones}
@@ -1250,6 +1427,7 @@ function Dashboard() {
                           bottom: 10
                         }}
                       >
+
                         <CartesianGrid
                           strokeDasharray="3 3"
                           horizontal={false}
@@ -1287,6 +1465,7 @@ function Dashboard() {
                           radius={[0, 5, 5, 0]}
                           barSize={17}
                         >
+
                           {datosVariaciones.map((registro) => (
                             <Cell
                               key={registro.code}
@@ -1297,9 +1476,12 @@ function Dashboard() {
                               }
                             />
                           ))}
+
                         </Bar>
+
                       </BarChart>
                     </ResponsiveContainer>
+
                   </div>
                 )}
 
@@ -1315,20 +1497,30 @@ function Dashboard() {
                 )}
 
               <div className="highlight-strip">
+
                 <span>Variaciones registradas</span>
 
                 <strong>
                   {incrementos.length} incrementos · {reducciones.length} reducciones
                 </strong>
+
               </div>
+
             </article>
+
           </div>
 
-          {/* TABLA DE DETALLE CON PAGINACIÓN */}
+          {/* ==================================
+              TABLA DE DETALLE
+          ================================== */}
 
-          <article className="dashboard-card table-card">
+          <article
+            className="dashboard-card table-card"
+            id="datos-detallados"
+          >
 
             <div className="card-heading">
+
               <div>
                 <h2>Detalle de emisiones por país</h2>
 
@@ -1339,7 +1531,10 @@ function Dashboard() {
                 </p>
               </div>
 
-              <span className="year-label">{anio}</span>
+              <span className="year-label">
+                {anio}
+              </span>
+
             </div>
 
             {cargandoDetalle && (
@@ -1356,8 +1551,11 @@ function Dashboard() {
 
             {!cargandoDetalle && !errorDetalle && (
               <>
+
                 <div className="table-placeholder">
+
                   <table>
+
                     <thead>
                       <tr>
                         <th>Posición</th>
@@ -1370,25 +1568,37 @@ function Dashboard() {
                     </thead>
 
                     <tbody>
-                      {registrosPaginados.map((registro) => (
-                        <tr key={`${registro.code}-${registro.year}`}>
-                          <td>{registro.posicion}</td>
-                          <td>{registro.entity}</td>
-                          <td>{registro.code}</td>
-                          <td>{registro.year}</td>
+
+                      {registrosPaginados.map((registro, index) => (
+                        <tr
+                          key={`${registro.code}-${registro.year}`}
+                        >
                           <td>
-                            {Number(registro.emisiones_gt ?? 0).toFixed(3)} Gt
+                            {registro.posicion ?? indiceInicial + index + 1}
                           </td>
+
+                          <td>{registro.entity}</td>
+
+                          <td>{registro.code}</td>
+
+                          <td>{registro.year}</td>
+
                           <td>
-                            {registro.variacion_porcentual == null
-                              ? "Sin datos"
-                              : `${registro.variacion_porcentual >= 0 ? "+" : ""}${Number(
-                                  registro.variacion_porcentual
-                                ).toFixed(2)}%`}
+                            {Number(
+                              registro.emisiones_gt ?? 0
+                            ).toFixed(3)} Gt
+                          </td>
+
+                          <td>
+                            {formatearVariacion(
+                              registro.variacion_porcentual
+                            )}
                           </td>
                         </tr>
                       ))}
+
                     </tbody>
+
                   </table>
 
                   {detalle.length === 0 && (
@@ -1396,9 +1606,10 @@ function Dashboard() {
                       No hay registros para mostrar.
                     </p>
                   )}
+
                 </div>
 
-                {/* CONTROLES DE PAGINACIÓN */}
+                {/* PAGINACIÓN */}
 
                 {totalRegistros > 0 && (
                   <div className="pagination">
@@ -1440,8 +1651,10 @@ function Dashboard() {
                       </button>
 
                     </div>
+
                   </div>
                 )}
+
               </>
             )}
 
@@ -1451,8 +1664,10 @@ function Dashboard() {
             </div>
 
           </article>
+
         </>
       )}
+
     </section>
   );
 }

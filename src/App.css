@@ -1,13 +1,26 @@
 
 /* ========================================
-   CONFIGURACIÓN GENERAL DE LA APLICACIÓN
+   CONFIGURACIÓN GENERAL
 ======================================== */
+
+:root {
+  --primary: #28765B;
+  --primary-dark: #173B32;
+  --primary-light: #EAF3ED;
+  --background: #F4F7F5;
+  --surface: #FFFFFF;
+  --border: #E2EAE5;
+  --text: #173B32;
+  --muted: #718078;
+  --muted-light: #87958D;
+  --shadow: 0 3px 12px rgba(23, 59, 50, 0.045);
+}
 
 .app-container {
   display: flex;
   width: 100%;
   min-height: 100vh;
-  background-color: #F4F7F5;
+  background: var(--background);
 }
 
 /* ========================================
@@ -15,52 +28,76 @@
 ======================================== */
 
 .sidebar {
-  width: 250px;
-  min-width: 250px;
-  min-height: 100vh;
-  flex-shrink: 0;
-  background-color: #173B32;
-  color: #FFFFFF;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  padding: 25px 16px;
+  width: 250px;
+  height: 100vh;
+  padding: 26px 17px 20px;
+  background: var(--primary-dark);
+  color: white;
+  flex-shrink: 0;
 }
 
-/* Identidad del dashboard */
-
 .sidebar-brand {
-  padding: 0 10px 35px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 34px;
+}
+
+.brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  color: white;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 11px;
+}
+
+.brand-text {
+  min-width: 0;
 }
 
 .sidebar-brand h2 {
-  font-size: 19px;
+  margin-bottom: 5px;
+  color: white;
+  font-size: 16px;
   font-weight: 700;
-  margin-bottom: 6px;
-  color: #FFFFFF;
+  line-height: 1.3;
 }
 
 .sidebar-brand span {
-  font-size: 11px;
   color: #B8CDC4;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
-/* Etiquetas de sección */
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+}
 
 .section-label {
+  display: block;
+  margin: 0 10px 13px;
   color: #91ADA1;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.2px;
-  padding: 0 10px;
-  margin-bottom: 12px;
 }
-
-/* Menú de navegación */
 
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
 }
 
 .menu-item {
@@ -73,38 +110,41 @@
   color: #D5E3DC;
   text-decoration: none;
   font-size: 13px;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
 
 .menu-item:hover {
-  background-color: #285447;
-  color: #FFFFFF;
+  color: white;
+  background: #285447;
 }
 
 .menu-item.active {
-  background-color: #2C6653;
-  color: #FFFFFF;
+  color: white;
+  background: #2C6653;
   font-weight: 600;
 }
 
 .menu-item svg {
-  width: 18px;
-  height: 18px;
   flex-shrink: 0;
 }
 
-/* Parte inferior de la barra lateral */
-
 .sidebar-footer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   margin-top: auto;
-  padding: 20px 10px 5px;
+  padding: 18px 9px 5px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   color: #B8CDC4;
   font-size: 11px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #64C795;
 }
 
 /* ========================================
@@ -112,15 +152,12 @@
 ======================================== */
 
 .main-content {
-  flex: 1;
   width: calc(100% - 250px);
   min-width: 0;
-  padding: 26px 30px;
+  min-height: 100vh;
+  margin-left: 250px;
+  padding: 30px 32px;
 }
-
-/* ========================================
-   ENCABEZADO
-======================================== */
 
 .top-header {
   display: flex;
@@ -128,216 +165,70 @@
   align-items: center;
   gap: 20px;
   width: 100%;
-  margin-bottom: 28px;
+  margin-bottom: 26px;
 }
 
 .breadcrumb {
   display: block;
+  margin-bottom: 9px;
   color: #789087;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.3px;
-  margin-bottom: 10px;
 }
 
 .top-header h1 {
-  color: #173B32;
+  margin-bottom: 7px;
+  color: var(--text);
   font-size: 28px;
   font-weight: 700;
-  margin-bottom: 6px;
 }
 
 .top-header p {
-  color: #718078;
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
 }
-
-/* Periodo de análisis */
 
 .header-period {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background-color: #FFFFFF;
-  border: 1px solid #E2EAE5;
-  border-radius: 9px;
   padding: 12px 17px;
   flex-shrink: 0;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 9px;
 }
 
 .header-period span {
-  color: #829189;
+  color: var(--muted-light);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 .header-period strong {
-  color: #173B32;
+  color: var(--text);
   font-size: 15px;
 }
-
-/* ========================================
-   CONTENEDOR TEMPORAL DEL DASHBOARD
-======================================== */
-
-.dashboard-placeholder {
-  width: 100%;
-  min-height: 180px;
-  background-color: #FFFFFF;
-  border: 1px solid #E2EAE5;
-  border-radius: 13px;
-  padding: 25px;
-}
-
-.dashboard-placeholder h2 {
-  color: #173B32;
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.dashboard-placeholder p {
-  color: #718078;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-/* ========================================
-   DISEÑO RESPONSIVO
-======================================== */
-
-/* Pantallas medianas */
-
-@media (max-width: 1024px) {
-  .sidebar {
-    width: 220px;
-    min-width: 220px;
-  }
-
-  .main-content {
-    width: calc(100% - 220px);
-    padding: 22px 20px;
-  }
-
-  .top-header h1 {
-    font-size: 25px;
-  }
-}
-
-/* Tablets y dispositivos pequeños */
-
-@media (max-width: 768px) {
-  .sidebar {
-    width: 70px;
-    min-width: 70px;
-    padding: 20px 9px;
-  }
-
-  .sidebar-brand {
-    padding: 0 4px 30px;
-  }
-
-  .sidebar-brand h2,
-  .sidebar-brand span,
-  .section-label,
-  .menu-item span,
-  .sidebar-footer span {
-    display: none;
-  }
-
-  .menu-item {
-    justify-content: center;
-    padding: 13px 5px;
-  }
-
-  .menu-item svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .sidebar-footer {
-    justify-content: center;
-    padding: 15px 0;
-  }
-
-  .main-content {
-    width: calc(100% - 70px);
-    padding: 20px 16px;
-  }
-
-  .top-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .header-period {
-    width: 100%;
-  }
-}
-
-/* Celulares */
-
-@media (max-width: 480px) {
-  .sidebar {
-    width: 58px;
-    min-width: 58px;
-    padding: 16px 6px;
-  }
-
-  .main-content {
-    width: calc(100% - 58px);
-    padding: 16px 10px;
-  }
-
-  .top-header {
-    margin-bottom: 20px;
-    gap: 15px;
-  }
-
-  .top-header h1 {
-    font-size: 23px;
-  }
-
-  .top-header p {
-    font-size: 12px;
-  }
-
-  .breadcrumb {
-    font-size: 9px;
-  }
-
-  .header-period {
-    padding: 11px 13px;
-  }
-
-  .dashboard-placeholder {
-    padding: 16px;
-    border-radius: 10px;
-  }
-
-  .dashboard-placeholder h2 {
-    font-size: 16px;
-  }
-}
-
-
 
 /* ========================================
    CONTENIDO DEL DASHBOARD
 ======================================== */
 
 .dashboard-content {
-  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
+  width: 100%;
 }
 
 .loading-message,
 .error-message {
-  padding: 25px;
-  background: #FFFFFF;
+  padding: 22px;
+  background: white;
+  border: 1px solid var(--border);
   border-radius: 10px;
   color: #52665C;
   font-size: 14px;
@@ -345,7 +236,276 @@
 
 .error-message {
   color: #B42318;
-  border: 1px solid #F3C6C2;
+  border-color: #F3C6C2;
+}
+
+.dashboard-placeholder {
+  width: 100%;
+  min-height: 180px;
+  padding: 25px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+}
+
+.dashboard-placeholder h2 {
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 18px;
+}
+
+.dashboard-placeholder p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   FILTROS GLOBALES
+======================================== */
+
+.dashboard-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  width: 100%;
+  margin-bottom: 2px;
+  padding: 20px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.global-filters-grid {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(280px, 1.3fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.global-filters-grid .filter-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.global-filters-grid .filter-control label {
+  color: #456457;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.global-filters-grid .filter-control select:not(.comparison-select-global) {
+  width: 100%;
+  height: 43px;
+  padding: 0 12px;
+  border: 1px solid #D5E2DA;
+  border-radius: 7px;
+  background: white;
+  color: #344B40;
+  font-size: 13px;
+  outline: none;
+}
+
+.global-filters-grid select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(40, 118, 91, 0.10);
+}
+
+.comparison-select-global {
+  width: 100%;
+  min-height: 110px;
+  padding: 8px;
+  border: 1px solid #D5E2DA;
+  border-radius: 7px;
+  background: white;
+  color: #344B40;
+  font-size: 12px;
+  outline: none;
+}
+
+.comparison-select-global option {
+  padding: 6px;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.filter-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-control label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.filter-control select {
+  min-width: 120px;
+  padding: 10px 12px;
+  border: 1px solid #DCE6DF;
+  border-radius: 7px;
+  background: #F8FAF8;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+}
+
+.filter-control select:focus {
+  border-color: var(--primary);
+}
+
+.filter-help {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted-light);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* Selector desplegable de países */
+
+.country-filter {
+  position: relative;
+  z-index: 20;
+  min-width: 0;
+  width: 100%;
+}
+
+.selectBox {
+  position: relative;
+  width: 100%;
+}
+
+.country-filter-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  color: #344B40;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.country-filter-button:hover {
+  border-color: var(--primary);
+}
+
+.country-filter-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.country-filter-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.country-filter-button svg {
+  transition: transform 0.2s;
+}
+
+.country-filter-button .chevron-open {
+  transform: rotate(180deg);
+}
+
+.country-filter-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  min-width: 260px;
+  overflow: hidden;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.country-filter-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+  color: #344B40;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.country-filter-options {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.country-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  color: #344B40;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.country-filter-option:hover {
+  background: var(--background);
+}
+
+.country-filter-option input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.country-filter-option input:disabled {
+  cursor: not-allowed;
+}
+
+.country-filter-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  background: white;
+}
+
+.country-filter-footer button {
+  padding: 5px;
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.country-filter-footer button:hover {
+  color: var(--primary-dark);
 }
 
 /* ========================================
@@ -360,12 +520,18 @@
 }
 
 .kpi-card {
-  background: #FFFFFF;
-  border: 1px solid #E2EAE5;
-  border-radius: 12px;
-  padding: 20px;
   min-width: 0;
-  box-shadow: 0 2px 5px rgba(23, 59, 50, 0.03);
+  padding: 20px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(23, 59, 50, 0.07);
 }
 
 .kpi-card-header {
@@ -373,28 +539,28 @@
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-bottom: 18px;
+  margin-bottom: 17px;
 }
 
 .kpi-title {
+  color: var(--muted);
   font-size: 12px;
   font-weight: 600;
-  color: #718078;
 }
 
 .kpi-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 38px;
   height: 38px;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
+  border-radius: 9px;
 }
 
 .kpi-icon.green {
   background: #E5F3EC;
-  color: #28765B;
+  color: var(--primary);
 }
 
 .kpi-icon.blue {
@@ -413,21 +579,21 @@
 }
 
 .kpi-value {
-  color: #173B32;
+  margin-bottom: 8px;
+  color: var(--text);
   font-size: clamp(21px, 2vw, 27px);
   font-weight: 700;
-  margin-bottom: 8px;
   overflow-wrap: anywhere;
 }
 
 .kpi-description {
-  color: #87958D;
+  color: var(--muted-light);
   font-size: 11px;
   line-height: 1.5;
 }
 
 /* ========================================
-   CONTENEDORES DE GRÁFICAS
+   TARJETAS Y ENCABEZADOS
 ======================================== */
 
 .dashboard-grid {
@@ -438,12 +604,12 @@
 }
 
 .dashboard-card {
-  background: #FFFFFF;
-  border: 1px solid #E2EAE5;
-  border-radius: 12px;
-  padding: 22px;
   min-width: 0;
-  box-shadow: 0 2px 5px rgba(23, 59, 50, 0.03);
+  padding: 22px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
 }
 
 .card-heading {
@@ -455,25 +621,26 @@
 }
 
 .card-heading h2 {
-  color: #173B32;
+  margin-bottom: 6px;
+  color: var(--text);
   font-size: 16px;
   font-weight: 700;
-  margin-bottom: 6px;
 }
 
 .card-heading p {
-  color: #87958D;
+  color: var(--muted-light);
   font-size: 11px;
+  line-height: 1.5;
 }
 
 .year-label {
-  background: #EAF3ED;
-  color: #28765B;
+  flex-shrink: 0;
   padding: 7px 12px;
   border-radius: 6px;
+  background: var(--primary-light);
+  color: var(--primary);
   font-size: 11px;
   font-weight: 700;
-  flex-shrink: 0;
 }
 
 .chart-container {
@@ -482,129 +649,6 @@
   min-width: 0;
 }
 
-/* ========================================
-   RESPONSIVIDAD DEL DASHBOARD
-======================================== */
-
-@media (max-width: 1100px) {
-  .kpi-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .kpi-grid {
-    gap: 12px;
-  }
-
-  .kpi-card {
-    padding: 16px;
-  }
-
-  .dashboard-card {
-    padding: 17px;
-  }
-
-  .chart-container {
-    height: 260px;
-  }
-}
-
-@media (max-width: 480px) {
-  .kpi-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .kpi-card {
-    padding: 16px;
-  }
-
-  .card-heading h2 {
-    font-size: 14px;
-  }
-
-  .card-heading p {
-    font-size: 10px;
-  }
-
-  .chart-container {
-    height: 240px;
-  }
-}
-
-
-/* ========================================
-   FILTRO DE AÑO
-======================================== */
-
-.dashboard-filters {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  background: #FFFFFF;
-  border: 1px solid #E2EAE5;
-  border-radius: 12px;
-  padding: 15px 20px;
-}
-
-.filter-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #173B32;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.filter-control {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.filter-control label {
-  color: #718078;
-  font-size: 12px;
-}
-
-.filter-control select {
-  min-width: 120px;
-  padding: 10px 12px;
-  border: 1px solid #DCE6DF;
-  border-radius: 7px;
-  background: #F8FAF8;
-  color: #173B32;
-  font-size: 13px;
-  outline: none;
-  cursor: pointer;
-}
-
-.filter-control select:focus {
-  border-color: #28765B;
-  box-shadow: 0 0 0 2px rgba(40, 118, 91, 0.12);
-}
-
-@media (max-width: 480px) {
-  .dashboard-filters {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .filter-control {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .filter-control select {
-    flex: 1;
-  }
-}
-
-
-
-/* Gráfica de evolución histórica */
 .evolution-card {
   width: 100%;
 }
@@ -615,10 +659,10 @@
   min-height: 300px;
 }
 
+/* ========================================
+   MAPA GEOGRÁFICO
+======================================== */
 
-
-
-/* Mapa geográfico */
 .map-card {
   width: 100%;
   min-width: 0;
@@ -632,27 +676,27 @@
   min-height: 450px;
   margin-top: 15px;
   overflow: hidden;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  border: 1px solid #E2EAE5;
 }
 
 .map-container .leaflet-container {
   position: relative;
+  z-index: 1;
   width: 100% !important;
   height: 100% !important;
   min-height: 450px;
-  z-index: 1;
 }
 
 .map-legend {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 18px;
+  color: var(--muted);
   font-size: 12px;
-  color: #718078;
 }
 
 .legend-colors {
@@ -668,32 +712,31 @@
 
 .map-note {
   margin-top: 12px;
+  color: var(--muted);
   font-size: 12px;
-  color: #718078;
 }
 
-/* Información emergente de los países */
 .tooltip-pais {
-  background-color: #173B32;
-  color: #FFFFFF;
+  padding: 9px 12px;
   border: none;
   border-radius: 7px;
-  padding: 9px 12px;
+  background: var(--primary-dark);
+  color: white;
   font-size: 12px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
 .tooltip-pais strong {
+  color: white;
   font-size: 13px;
-  color: #FFFFFF;
 }
 
 .tooltip-pais::before {
-  border-top-color: #173B32;
+  border-top-color: var(--primary-dark);
 }
 
 /* ========================================
-   DISTRIBUCIÓN PRINCIPAL 70% / 30%
+   DISTRIBUCIÓN MAPA Y RANKING
 ======================================== */
 
 .primary-grid {
@@ -705,8 +748,8 @@
 }
 
 .primary-map {
-  min-width: 0;
   width: 100%;
+  min-width: 0;
 }
 
 .primary-map .map-card {
@@ -716,8 +759,6 @@
 .primary-map .map-container {
   height: 450px;
 }
-
-/* Resumen inferior del Top 5 */
 
 .ranking-card {
   display: flex;
@@ -733,26 +774,26 @@
   margin-top: auto;
   padding: 14px 15px;
   background: #F1F7F3;
-  border-left: 4px solid #28765B;
+  border-left: 4px solid var(--primary);
   border-radius: 7px;
 }
 
 .ranking-summary span,
 .ranking-summary p {
   display: block;
-  color: #718078;
+  color: var(--muted);
   font-size: 11px;
 }
 
 .ranking-summary strong {
   display: block;
-  color: #173B32;
-  font-size: 17px;
   margin: 5px 0;
+  color: var(--text);
+  font-size: 17px;
 }
 
 /* ========================================
-   NIVEL 5 - TRES COLUMNAS
+   GRÁFICAS SECUNDARIAS
 ======================================== */
 
 .secondary-grid {
@@ -780,8 +821,8 @@
 
 .chart-placeholder {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   min-height: 300px;
   padding: 20px;
   background: #F8FAF8;
@@ -792,12 +833,10 @@
 
 .chart-placeholder p {
   max-width: 230px;
-  color: #87958D;
+  color: var(--muted-light);
   font-size: 12px;
   line-height: 1.7;
 }
-
-/* Franja inferior de dato destacado */
 
 .highlight-strip {
   display: flex;
@@ -806,22 +845,22 @@
   margin-top: auto;
   padding: 13px 14px;
   background: #F1F7F3;
-  border-bottom: 3px solid #28765B;
+  border-bottom: 3px solid var(--primary);
   border-radius: 0 0 7px 7px;
 }
 
 .highlight-strip span {
-  color: #718078;
+  color: var(--muted);
   font-size: 10px;
 }
 
 .highlight-strip strong {
-  color: #173B32;
+  color: var(--text);
   font-size: 13px;
 }
 
 /* ========================================
-   NIVEL 6 - TABLA DE DATOS
+   TABLA DE EMISIONES
 ======================================== */
 
 .table-card {
@@ -849,18 +888,102 @@
   white-space: nowrap;
 }
 
-.table-placeholder td {
-  padding: 22px 12px;
-  color: #87958D;
+.table-placeholder tbody tr {
+  border-bottom: 1px solid #E7EDE9;
+  transition: background 0.15s;
+}
+
+.table-placeholder tbody tr:hover {
+  background: #F8FAF8;
+}
+
+.table-placeholder tbody td {
+  padding: 13px 12px;
+  color: #456457;
   font-size: 12px;
-  text-align: center;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table-placeholder tbody td:first-child {
+  font-weight: 600;
 }
 
 /* ========================================
-   RESPONSIVIDAD DE LA DISTRIBUCIÓN
+   PAGINACIÓN
 ======================================== */
 
-@media (max-width: 1100px) {
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.pagination-info {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.pagination-buttons button {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: white;
+  color: var(--primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pagination-buttons button:hover:not(:disabled) {
+  background: var(--background);
+}
+
+.pagination-buttons button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pagination-current {
+  white-space: nowrap;
+}
+
+/* ========================================
+   ELEMENTOS GENERALES
+======================================== */
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.comparison-select {
+  max-width: 100%;
+}
+
+/* ========================================
+   RESPONSIVIDAD
+======================================== */
+
+@media (max-width: 1200px) {
+  .main-content {
+    padding: 25px 22px;
+  }
+
   .primary-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -874,7 +997,77 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .main-content {
+    width: calc(100% - 220px);
+    margin-left: 220px;
+  }
+
+  .top-header h1 {
+    font-size: 25px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
+  .sidebar {
+    width: 70px;
+    padding: 20px 9px;
+  }
+
+  .sidebar-brand {
+    justify-content: center;
+    padding: 0 0 30px;
+  }
+
+  .brand-text,
+  .section-label,
+  .menu-item span,
+  .sidebar-footer span {
+    display: none;
+  }
+
+  .menu-item {
+    justify-content: center;
+    padding: 13px 5px;
+  }
+
+  .menu-item svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .sidebar-footer {
+    justify-content: center;
+    padding: 15px 0;
+  }
+
+  .main-content {
+    width: calc(100% - 70px);
+    margin-left: 70px;
+    padding: 20px 16px;
+  }
+
+  .top-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-period {
+    width: 100%;
+  }
+
+  .global-filters-grid {
+    grid-template-columns: 1fr;
+  }
+
   .secondary-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -888,12 +1081,94 @@
     min-height: 350px;
   }
 
+  .primary-map .map-container .leaflet-container {
+    min-height: 350px;
+  }
+
   .ranking-card .chart-container {
     height: 280px;
+  }
+
+  .secondary-card .chart-container {
+    height: 280px;
+  }
+
+  .kpi-grid {
+    gap: 12px;
+  }
+
+  .kpi-card,
+  .dashboard-card {
+    padding: 17px;
   }
 }
 
 @media (max-width: 480px) {
+  .sidebar {
+    width: 58px;
+    padding: 16px 6px;
+  }
+
+  .main-content {
+    width: calc(100% - 58px);
+    margin-left: 58px;
+    padding: 16px 10px;
+  }
+
+  .top-header {
+    margin-bottom: 18px;
+    gap: 14px;
+  }
+
+  .top-header h1 {
+    font-size: 22px;
+  }
+
+  .top-header p {
+    font-size: 12px;
+  }
+
+  .breadcrumb {
+    font-size: 9px;
+  }
+
+  .dashboard-content {
+    gap: 15px;
+  }
+
+  .dashboard-filters {
+    padding: 15px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-card {
+    padding: 16px;
+  }
+
+  .card-heading {
+    align-items: flex-start;
+  }
+
+  .card-heading h2 {
+    font-size: 14px;
+  }
+
+  .card-heading p {
+    font-size: 10px;
+  }
+
+  .chart-container {
+    height: 240px;
+  }
+
+  .evolution-chart {
+    height: 270px;
+    min-height: 250px;
+  }
+
   .primary-grid,
   .secondary-grid {
     gap: 14px;
@@ -904,336 +1179,158 @@
     min-height: 300px;
   }
 
+  .primary-map .map-container .leaflet-container {
+    min-height: 300px;
+  }
+
   .table-placeholder table {
     min-width: 700px;
   }
-}
 
-
-
-/* CONTENEDOR DEL SELECTOR DE PAÍSES */
-
-.country-filter {
-  position: relative;
-  min-width: 260px;
-  z-index: 20;
-}
-
-.selectBox {
-  position: relative;
-  width: 100%;
-}
-
-/* BOTÓN PRINCIPAL */
-
-.country-filter-button {
-  width: 100%;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 14px;
-  background: #FFFFFF;
-  border: 1px solid #E2EAE5;
-  border-radius: 8px;
-  color: #344B40;
-  font-size: 14px;
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.country-filter-button:hover {
-  border-color: #28765B;
-}
-
-.country-filter-button:focus-visible {
-  outline: 2px solid #28765B;
-  outline-offset: 2px;
-}
-
-.country-filter-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.country-filter-button svg {
-  transition: transform 0.2s;
-}
-
-.country-filter-button .chevron-open {
-  transform: rotate(180deg);
-}
-
-/* PANEL DESPLEGABLE */
-
-.country-filter-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  width: 100%;
-  min-width: 260px;
-  background: #FFFFFF;
-  border: 1px solid #E2EAE5;
-  border-radius: 9px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
-  z-index: 1000;
-  overflow: hidden;
-}
-
-/* ENCABEZADO */
-
-.country-filter-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  background: #F4F7F5;
-  border-bottom: 1px solid #E2EAE5;
-  color: #344B40;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-/* OPCIONES */
-
-.country-filter-options {
-  max-height: 240px;
-  overflow-y: auto;
-  padding: 6px 0;
-}
-
-.country-filter-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 14px;
-  color: #344B40;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.country-filter-option:hover {
-  background: #F4F7F5;
-}
-
-.country-filter-option input {
-  width: 16px;
-  height: 16px;
-  accent-color: #28765B;
-  cursor: pointer;
-}
-
-.country-filter-option input:disabled {
-  cursor: not-allowed;
-}
-
-/* PIE DEL DESPLEGABLE */
-
-.country-filter-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-top: 1px solid #E2EAE5;
-  background: #FFFFFF;
-}
-
-.country-filter-footer button {
-  border: none;
-  background: transparent;
-  color: #28765B;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.country-filter-footer button:hover {
-  color: #173B32;
-}
-
-/* TEXTO DE AYUDA */
-
-.filter-help {
-  display: block;
-  margin-top: 6px;
-  color: #718078;
-  font-size: 11px;
-}
-
-/* ========================================
-   TABLA DE EMISIONES
-======================================== */
-
-.table-placeholder tbody tr {
-  border-bottom: 1px solid #E7EDE9;
-}
-
-.table-placeholder tbody tr:hover {
-  background: #F8FAF8;
-}
-
-.table-placeholder tbody td {
-  padding: 13px 12px;
-  color: #456457;
-  text-align: left;
-  white-space: nowrap;
-}
-
-.table-placeholder tbody td:first-child {
-  font-weight: 600;
-}
-
-@media (max-width: 768px) {
-  .comparison-select {
-    min-height: 120px;
-  }
-}
-
-
-/* ========================================
-   FILTROS GLOBALES DEL DASHBOARD
-======================================== */
-
-.dashboard-filters {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  margin-bottom: 22px;
-  background: #FFFFFF;
-  border: 1px solid #E2EAE5;
-  border-radius: 10px;
-}
-
-.global-filters-grid {
-  display: grid;
-  grid-template-columns: minmax(180px, 0.7fr) minmax(280px, 1.3fr);
-  gap: 20px;
-  align-items: start;
-}
-
-.global-filters-grid .filter-control {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.global-filters-grid .filter-control label {
-  color: #456457;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.global-filters-grid .filter-control select:not(.comparison-select-global) {
-  width: 100%;
-  height: 42px;
-  padding: 0 12px;
-  border: 1px solid #D5E2DA;
-  border-radius: 7px;
-  background: #FFFFFF;
-  color: #344B40;
-  font-size: 13px;
-  outline: none;
-}
-
-.comparison-select-global {
-  width: 100%;
-  min-height: 110px;
-  padding: 8px;
-  border: 1px solid #D5E2DA;
-  border-radius: 7px;
-  background: #FFFFFF;
-  color: #344B40;
-  font-size: 12px;
-  outline: none;
-}
-
-.comparison-select-global:focus,
-.global-filters-grid select:focus {
-  border-color: #28765B;
-  box-shadow: 0 0 0 2px rgba(40, 118, 91, 0.10);
-}
-
-.comparison-select-global option {
-  padding: 6px;
-}
-
-.filter-help {
-  color: #87958D;
-  font-size: 10px;
-  line-height: 1.5;
-}
-
-@media (max-width: 768px) {
-  .global-filters-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-/* ========================================
-   PAGINACIÓN DE LA TABLA
-======================================== */
-
-.pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  border-top: 1px solid #E2EAE5;
-  flex-wrap: wrap;
-}
-
-.pagination-info {
-  color: #718078;
-  font-size: 13px;
-}
-
-.pagination-buttons {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #718078;
-  font-size: 13px;
-}
-
-.pagination-buttons button {
-  padding: 8px 14px;
-  border: 1px solid #E2EAE5;
-  border-radius: 6px;
-  background: #FFFFFF;
-  color: #28765B;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s ease;
-}
-
-.pagination-buttons button:hover:not(:disabled) {
-  background: #F4F7F5;
-}
-
-.pagination-buttons button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.pagination-current {
-  white-space: nowrap;
-}
-
-@media (max-width: 600px) {
   .pagination {
     flex-direction: column;
     align-items: flex-start;
   }
 
   .pagination-buttons {
-    width: 100%;
     justify-content: space-between;
+    width: 100%;
   }
+
+  .country-filter-menu {
+    min-width: 230px;
+  }
+}
+
+
+
+/* ========================================
+   BUSCADOR DE PAÍSES
+======================================== */
+
+.country-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 10px 12px;
+  padding: 10px 12px;
+  border: 1px solid #DCE6DF;
+  border-radius: 7px;
+  background: #F8FAF8;
+  color: #718078;
+}
+
+.country-search:focus-within {
+  border-color: #28765B;
+  box-shadow: 0 0 0 3px rgba(40, 118, 91, 0.08);
+}
+
+.country-search input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #173B32;
+  font-size: 12px;
+}
+
+.country-search input::placeholder {
+  color: #87958D;
+}
+
+.country-no-results {
+  padding: 20px 12px;
+  color: #718078;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Países seleccionados */
+
+.selected-countries {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.selected-country-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 11px;
+  border: 1px solid #D4E8DA;
+  border-radius: 20px;
+  background: #EAF3ED;
+  color: #28765B;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ========================================
+   CINCO TARJETAS KPI
+======================================== */
+
+.kpi-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 155px;
+}
+
+.kpi-value {
+  line-height: 1.25;
+}
+
+/* ========================================
+   RESPONSIVIDAD KPI
+======================================== */
+
+@media (max-width: 1200px) {
+  .kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Navegación de la sidebar */
+html {
+  scroll-behavior: smooth;
+}
+
+#resumen,
+#emisiones-pais,
+#evolucion,
+#comparacion,
+#datos-detallados {
+  scroll-margin-top: 25px;
+}
+
+.menu-item {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.menu-item.active {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+}
+
+.menu-item-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
