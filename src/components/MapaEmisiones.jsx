@@ -11,8 +11,7 @@ import "leaflet/dist/leaflet.css";
 const URL_GEOJSON =
   "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
 
-const URL_API =
-  "http://localhost:3001/api/emisiones/mapa";
+const URL_API = `${import.meta.env.VITE_API_URL || "http://localhost:3001"}/api/emisiones/mapa`;
 
 const colores = [
   "#E8F3ED",
